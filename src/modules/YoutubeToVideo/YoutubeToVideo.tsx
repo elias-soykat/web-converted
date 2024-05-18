@@ -48,7 +48,6 @@ export default function YoutubeToVideo() {
     const link = document.createElement("a");
     const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/file-download?url=https://www.youtube.com/watch?v=${videoId}&itag=${itag}&mimeType=${mimeType}&title=${title}`;
     link.href = apiUrl;
-    link.download = `${title}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
