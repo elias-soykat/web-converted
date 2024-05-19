@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConvertedFile from "./ConvertedFile";
 import EnterLink from "./EnterLink";
 
@@ -22,7 +22,8 @@ export default function YoutubeToVideo() {
     title: "",
     videoId: "",
   });
-  const getVideoFormatByVideoUrl = async (e: any) => {
+
+  const getVideosFormatByUrl = async (e: any) => {
     e.preventDefault();
 
     setIsLoading(true);
@@ -53,6 +54,20 @@ export default function YoutubeToVideo() {
     document.body.removeChild(link);
   };
 
+  useEffect(() => {
+    (async () => {
+      const isAlreadyVisited: string | null = sessionStorage.getItem("visited");
+      if (isAlreadyVisited) return;
+
+      await axios
+        .get(process.env.NEXT_PUBLIC_API_URL as string)
+        .catch(() =>
+          setError("The system has unexpected issue, Please try again."),
+        );
+      sessionStorage.setItem("visited", "1");
+    })();
+  }, []);
+
   return (
     <div className="container">
       {isLoading && (
@@ -68,7 +83,7 @@ export default function YoutubeToVideo() {
         />
       )}
 
-      <form onSubmit={getVideoFormatByVideoUrl} className="sm:w-6/12 lg:w-5/12">
+      <form onSubmit={getVideosFormatByUrl} className="sm:w-6/12 lg:w-5/12">
         <EnterLink onChange={({ target }: any) => setVideoUrl(target.value)} />
       </form>
 
