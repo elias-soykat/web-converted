@@ -1,7 +1,9 @@
 import { Analytics } from "@vercel/analytics/react";
 import { Inter as FontSans } from "next/font/google";
+import Nav from "../components/Nav";
 import "../styles/global.css";
 
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import { Metadata } from "next";
 import { ReactNode } from "react";
@@ -30,7 +32,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           fontSans.variable,
         )}
       >
+        <Nav />
         {children}
+        <Toaster />
         <Analytics />
       </body>
     </html>

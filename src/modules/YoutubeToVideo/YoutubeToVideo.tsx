@@ -1,5 +1,7 @@
 "use client";
 
+import Loading from "@/components/Loading";
+import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ConvertedFile from "./ConvertedFile";
@@ -12,7 +14,11 @@ interface VideoData {
   videoId: string;
 }
 
+const brokenLinkTitle =
+  "The video link might be broken, Please check the copied link 😔";
+
 export default function YoutubeToVideo() {
+  const { toast } = useToast();
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,15 +36,20 @@ export default function YoutubeToVideo() {
     setError(null);
 
     try {
+      const videoRegex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
+      if (!videoRegex.test(videoUrl)) {
+        toast({ title: brokenLinkTitle, variant: "destructive" });
+        setIsLoading(false);
+        return;
+      }
+
       const { data } = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/download`,
         { params: { url: videoUrl } },
       );
       setVideoData(data);
     } catch (err) {
-      setError(
-        "The video link might be broken 😔 <br/> Please check and copy it again.",
-      );
+      setError(brokenLinkTitle);
     } finally {
       setIsLoading(false);
     }
@@ -68,53 +79,47 @@ export default function YoutubeToVideo() {
     })();
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      toast({ variant: "destructive", title: error });
+    }
+  }, [error, toast]);
+
   return (
-    <div className="container">
-      {isLoading && (
-        <div className="fixed inset-0 flex h-screen items-center justify-center bg-black opacity-50">
-          <div className="h-20 w-20 animate-spin rounded-full border-8 border-gray-300 border-t-black" />
-        </div>
-      )}
+    <>
+      {isLoading && <Loading />}
+      <div className="items-center justify-center md:flex">
+        <div className="md:w-8/12 lg:w-7/12 xl:w-6/12">
+          <form onSubmit={getVideosFormatByUrl}>
+            <EnterLink
+              onChange={({ target }: any) => setVideoUrl(target.value)}
+            />
+          </form>
 
-      {error && (
-        <p
-          className="mb-4 font-semibold text-red-500"
-          dangerouslySetInnerHTML={{ __html: error }}
-        />
-      )}
+          <div>
+            <h2 className="text-sm font-semibold sm:pr-10 sm:text-base md:text-lg lg:py-2">
+              {videoData.title}
+            </h2>
 
-      <form onSubmit={getVideosFormatByUrl} className="sm:w-6/12 lg:w-5/12">
-        <EnterLink onChange={({ target }: any) => setVideoUrl(target.value)} />
-      </form>
-
-      <div className="lg:w-8/12">
-        <h2 className="text-sm font-semibold sm:pr-10 sm:text-base md:text-lg lg:py-2">
-          {videoData.title}
-        </h2>
-
-        <div className="mt-10">
-          {videoData.video.length > 0 && (
-            <>
-              <h1 className="mb-4 mt-6 text-lg font-semibold">Video Files</h1>
-              <ConvertedFile
-                contents={videoData.video}
-                handleDownload={handleDownloadFile}
-              />
-            </>
-          )}
-          {videoData.audio.length > 0 && (
-            <>
-              <h1 className="my-6 text-lg font-semibold md:mb-8 md:mt-12">
-                Audio Files
-              </h1>
-              <ConvertedFile
-                contents={videoData.audio}
-                handleDownload={handleDownloadFile}
-              />
-            </>
-          )}
+            <div className="mt-10">
+              {videoData.video.length > 0 && (
+                <ConvertedFile
+                  type="Video"
+                  contents={videoData.video}
+                  handleDownload={handleDownloadFile}
+                />
+              )}
+              {videoData.audio.length > 0 && (
+                <ConvertedFile
+                  type="Audio"
+                  contents={videoData.audio}
+                  handleDownload={handleDownloadFile}
+                />
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

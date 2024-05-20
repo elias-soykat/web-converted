@@ -1,17 +1,15 @@
-import Footer from "@/components/Footer";
-import Hero from "@/components/Hero";
-import Nav from "@/components/Nav";
+import HeroSection from "@/components/HeroSection";
+import PageLayout from "@/components/PageLayout";
 import YoutubeToVideo from "@/modules/YoutubeToVideo/YoutubeToVideo";
 
 export default function Home() {
   return (
-    <main className="flex h-screen flex-col justify-between">
-      <div>
-        <Nav />
-        <Hero />
-        <YoutubeToVideo />
-      </div>
-      <Footer />
-    </main>
+    <PageLayout>
+      <HeroSection
+        title="Video Converter"
+        desc="Easily convert youtube videos online for free."
+      />
+      <YoutubeToVideo />
+    </PageLayout>
   );
 }

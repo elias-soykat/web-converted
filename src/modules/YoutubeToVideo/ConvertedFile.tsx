@@ -1,13 +1,20 @@
+import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 
 type Props = {
   contents: any;
   handleDownload: any;
+  type: string;
 };
 
-export default function ConvertedFile({ contents, handleDownload }: Props) {
+export default function ConvertedFile({
+  contents,
+  handleDownload,
+  type,
+}: Props) {
   return (
     <>
+      <h1 className="mb-4 mt-6 text-lg font-semibold">{type} Files</h1>
       {contents.map((format: any, i: any) => (
         <div
           key={i}
@@ -26,13 +33,14 @@ export default function ConvertedFile({ contents, handleDownload }: Props) {
           </div>
 
           <div>
-            <button
+            <Button
+              variant="outline"
               className="flex items-center justify-center gap-x-2 rounded bg-black px-3 py-2 text-sm font-semibold text-white sm:-mt-2 sm:mb-2 sm:gap-x-3"
               onClick={() => handleDownload(format.itag, format.mimeType)}
             >
               Download
               <Download className="w-[16px] sm:w-[18px]" />
-            </button>
+            </Button>
           </div>
         </div>
       ))}

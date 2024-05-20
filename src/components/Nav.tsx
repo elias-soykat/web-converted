@@ -5,13 +5,13 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MenuIcon, Video } from "lucide-react";
 import Link from "next/link";
 
-const navItems = [{ name: "Home", href: "/" }];
+const navItems = [{ name: "Image Resizer", href: "/image-resizer" }];
 
 export default function Component() {
   return (
     <nav className="py-4 shadow-md sm:py-5">
       <div className="container flex items-center justify-between">
-        <Link className="flex items-center gap-x-2" href="#">
+        <Link className="flex items-center gap-x-2" href="/">
           <Video />
           <span className="font-semibold">Web Convert</span>
         </Link>
