@@ -2,8 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { MenuIcon, Video } from "lucide-react";
+import { Loader, MenuIcon, Video } from "lucide-react";
 import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 const navItems = [{ name: "Image Resizer", href: "/image-resizer" }];
 
@@ -41,11 +47,17 @@ export default function Component() {
 }
 
 const NavItem = ({ item }: any) => (
-  <Link
-    key={item.name}
-    className="text-lg font-medium underline-offset-4 hover:underline lg:text-base"
-    href={item.href}
-  >
-    {item.name}
-  </Link>
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button className="text-lg font-medium underline-offset-4 transition-all duration-300 hover:opacity-50 lg:text-base">
+          Image Resizer
+        </button>
+      </TooltipTrigger>
+      <TooltipContent className="flex justify-center items-center gap-x-2">
+        <Loader size={16} className="animate-spin" />
+        <p>Coming soon.</p>
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
 );
